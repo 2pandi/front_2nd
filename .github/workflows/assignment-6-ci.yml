@@ -38,8 +38,8 @@ jobs:
       - name: Post tsc/build error comment
         if: failure()
         uses: marocchino/sticky-pull-request-comment@v2
-        permissions:
-          pull-requests: write
+        # permissions:
+        #   pull-requests: write
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CI }}
         with:
