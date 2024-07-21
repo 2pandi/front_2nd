@@ -40,20 +40,19 @@ jobs:
         uses: marocchino/sticky-pull-request-comment@v2
         # permissions:
         #   pull-requests: write
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CI }}
         with:
+          GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CI }}
           message: |
             ## tsc build results
             tsc stderr:
             ```
             error1
-            ${{ steps.tsc.outputs.tsc_error }}
+            ${{ steps.tsc.outputs }}
             ```
             build stderr:
             ```
             error2
-            ${{ steps.build.outputs.build_error }}
+            ${{ steps.build.outputs }}
             ```
 
   lint:
