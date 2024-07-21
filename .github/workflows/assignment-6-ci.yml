@@ -26,7 +26,6 @@ jobs:
         run: |
           npm run tsc --workspace packages/assignment-6 2> tsc_error.log
           echo "::set-output name=stderr::$(cat tsc_error.log)"
-        continue-on-error: true
         shell: bash
 
       - name: Run build
@@ -34,20 +33,25 @@ jobs:
         run: |
           npm run build --workspace packages/assignment-6 2> build_error.log
           echo "::set-output name=stderr::$(cat build_error.log)"
-        continue-on-error: true
         shell: bash
 
       - name: Post tsc/build error comment
+        if: failure()
         env:
           URL: ${{ github.event.issue.comments_url }}
           GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CI }}
         run: |
-          curl \
-            -X POST \
-            $URL \
-            -H "Content-Type: application/json" \
-            -H "Authorization: token $TOKEN_FOR_CI" \
-            --data '{ "body": "blah blah" }'
+          if [ -n "$URL" ]; then
+            curl \
+              -X POST \
+              $URL \
+              -H "Content-Type: application/json" \
+              -H "Authorization: token $TOKEN_FOR_CI" \
+              --data '{ "body": "blah blah" }'
+          else
+            echo "Error: URL is not specified"
+            exit 1
+          fi
 
       - name: Upload tsc error log
         if: failure()
