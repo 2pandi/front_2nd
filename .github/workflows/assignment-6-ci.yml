@@ -25,36 +25,31 @@ jobs:
         id: tsc
         run: |
           npm run tsc --workspace packages/assignment-6 2> tsc_error.log
-          echo "::set-output name=stderr::$(cat tsc_error.log)"
+          echo "tsc_stderr=$(cat tsc_error.log)" >> $GITHUB_ENV
         shell: bash
 
       - name: Run build
         id: build
         run: |
           npm run build --workspace packages/assignment-6 2> build_error.log
-          echo "::set-output name=stderr::$(cat build_error.log)"
+          echo "build_stderr=$(cat build_error.log)" >> $GITHUB_ENV
         shell: bash
 
       - name: Post tsc/build error comment
         if: failure()
         uses: marocchino/sticky-pull-request-comment@v2
-        # permissions:
-        #   pull-requests: write
         with:
           GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CI }}
           message: |
             ## tsc build results
             tsc stderr:
             ```
-            error11
-            ${{ steps.tsc.outputs.stderr}}
+            ${{ env.tsc_stderr }}
             ```
             build stderr:
             ```
-            error22
-            ${{ steps.build.outputs.stderr }}
+            ${{ env.build_stderr }}
             ```
-
   lint:
     runs-on: ubuntu-latest
     steps:
