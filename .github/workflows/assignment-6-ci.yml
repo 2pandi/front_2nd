@@ -2,7 +2,6 @@ name: CI Assignment 6
 
 on:
   pull_request:
-    branches: [a-6]
     types: [opened, synchronize]
     paths:
       - 'packages/assignment-6/**'
