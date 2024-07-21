@@ -47,12 +47,12 @@ jobs:
             tsc stderr:
             ```
             error11
-            ${{ steps.tsc.outputs.value }}
+            ${{ Object.keys(steps.tsc.outputs).join(',') }}
             ```
             build stderr:
             ```
             error22
-            ${{ steps.build.outputs.value }}
+            ${{ steps.build.outputs }}
             ```
 
   lint:
