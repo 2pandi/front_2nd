@@ -40,12 +40,15 @@ jobs:
       - name: Post tsc/build error comment
         if: failure()
         env:
+          URL: ${{ github.event.issue.comments_url }}
           GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CI }}
         run: |
-          curl -s -H "Authorization: token $TOKEN_FOR_CI" \
-          -X POST \
-          -d "{\"body\": \"Build failed! Please check the logs.\"}" \
-          "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
+          curl \
+            -X POST \
+            $URL \
+            -H "Content-Type: application/json" \
+            -H "Authorization: token $TOKEN_FOR_CI" \
+            --data '{ "body": "blah blah" }'
 
       - name: Upload tsc error log
         if: failure()
