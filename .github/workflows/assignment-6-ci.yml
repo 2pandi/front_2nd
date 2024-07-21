@@ -7,7 +7,7 @@ on:
       - 'packages/assignment-6/**'
 
 jobs:
-  build:
+    build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -29,7 +29,6 @@ jobs:
           cat tsc_error.log >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
         shell: bash
-        continue-on-error: true
 
       - name: Run build
         id: build
@@ -39,7 +38,6 @@ jobs:
           cat build_error.log >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
         shell: bash
-        continue-on-error: true
 
       - name: Post tsc/build error comment
         if: failure()
