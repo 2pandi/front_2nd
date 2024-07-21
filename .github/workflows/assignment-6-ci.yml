@@ -37,23 +37,11 @@ jobs:
 
       - name: Post tsc/build error comment
         if: failure()
-        permissions:
-          contents: write
-          pull-requests: write
-          repository-projects: write
-          id-token: write
-        steps:
-          - name: Checkout
-            uses: actions/checkout@v4
-          - uses: actions/github-script@v6
-            with:
-              script: |
-                github.rest.issues.createComment({
-                  issue_number: context.issue.number,
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  body: '👋 Thanks for reporting!'
-                })
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            Hello world ! :wave:
+          reactions: eyes, rocket
 
       - name: Upload tsc error log
         if: failure()
