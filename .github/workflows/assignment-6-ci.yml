@@ -47,12 +47,12 @@ jobs:
             tsc stderr:
             ```
             error1
-            ${{ steps.tsc.outputs }}
+            ${{ steps.tsc.outputs.error }}
             ```
             build stderr:
             ```
             error2
-            ${{ steps.build.outputs }}
+            ${{ steps.build.outputs.error }}
             ```
 
   lint:
