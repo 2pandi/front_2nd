@@ -46,12 +46,12 @@ jobs:
             ## tsc build results
             tsc stderr:
             ```
-            error1
+            error11
             ${{ steps.tsc.outputs.value }}
             ```
             build stderr:
             ```
-            error2
+            error22
             ${{ steps.build.outputs.value }}
             ```
 
