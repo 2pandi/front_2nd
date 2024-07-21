@@ -89,7 +89,6 @@ jobs:
           path: eslint-report.json
       - name: Post ESLint error comment
         if: failure()
-        uses: marocchino/sticky-pull-request-comment@v2
         run: |
           curl -s -H "Authorization: token ${{ secrets.TOKEN_FOR_CI }}" \
           -X POST -d "{\"body\":\"Build failed! Please check the logs.\"}" \
