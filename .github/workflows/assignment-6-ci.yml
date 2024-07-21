@@ -90,7 +90,7 @@ jobs:
       - name: Post ESLint error comment
         if: failure()
         env:
-        GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CI }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CI }}
         run: |
           curl -s -H "Authorization: token $TOKEN_FOR_CI" \
           -X POST \
