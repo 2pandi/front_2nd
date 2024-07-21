@@ -25,6 +25,7 @@ jobs:
         id: tsc
         run: |
           npm run tsc --workspace packages/assignment-6 2> tsc_error.log
+          echo "::set-output name=stderr::$(cat tsc_error.log)"
         continue-on-error: true
         shell: bash
 
@@ -32,6 +33,7 @@ jobs:
         id: build
         run: |
           npm run build --workspace packages/assignment-6 2> build_error.log
+          echo "::set-output name=stderr::$(cat build_error.log)"
         continue-on-error: true
         shell: bash
 
@@ -44,11 +46,11 @@ jobs:
           message: |
             tsc stderr:
             \`\`\`
-            ${{ steps.tsc.outputs.tsc_error }}
+            ${{ steps.tsc.outputs.stderr }}
             \`\`\`
             build stderr:
             \`\`\`
-            ${{ steps.build.outputs.build_error }}
+            ${{ steps.build.outputs.stderr }}
             \`\`\`
 
       - name: Upload tsc error log
