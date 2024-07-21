@@ -37,14 +37,23 @@ jobs:
 
       - name: Post tsc/build error comment
         if: failure()
-        # uses: thollander/actions-comment-pull-request@v2
         uses: marocchino/sticky-pull-request-comment@v2
+        permissions:
+          pull-requests: write
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CI }}
         with:
           message: |
-            Hello world ! :wave:
-          reactions: eyes, rocket
+            ## tsc build results
+            ---
+            tsc stderr:
+            \`\`\`
+            ${{ steps.tsc.outputs.tsc_error }}
+            \`\`\`
+            build stderr:
+            \`\`\`
+            ${{ steps.build.outputs.build_error }}
+            \`\`\`
 
   lint:
     runs-on: ubuntu-latest
