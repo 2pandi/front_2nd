@@ -90,13 +90,10 @@ jobs:
       - name: Post ESLint error comment
         if: failure()
         uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CI }}
-          header: ESLint Report
-          message: |
-            \`\`\`
-            ${{ steps.lint.outputs.stderr }}
-            \`\`\`
+        run: |
+          curl -s -H "Authorization: token ${{ secrets.TOKEN_FOR_CI }}" \
+          -X POST -d "{\"body\":\"Build failed! Please check the logs.\"}" \
+          "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
 
   test:
     runs-on: ubuntu-latest
