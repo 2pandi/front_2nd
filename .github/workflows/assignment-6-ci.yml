@@ -46,15 +46,15 @@ jobs:
           message: |
             ## tsc build results
             tsc stderr:
-            \`\`\`
+            ```
             error1
             ${{ steps.tsc.outputs.tsc_error }}
-            \`\`\`
+            ```
             build stderr:
-            \`\`\`
+            ```
             error2
             ${{ steps.build.outputs.build_error }}
-            \`\`\`
+            ```
 
   lint:
     runs-on: ubuntu-latest
