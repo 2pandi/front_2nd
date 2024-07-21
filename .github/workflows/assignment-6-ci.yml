@@ -89,9 +89,12 @@ jobs:
           path: eslint-report.json
       - name: Post ESLint error comment
         if: failure()
+        env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -s -H "Authorization: token ${{ secrets.TOKEN_FOR_CI }}" \
-          -X POST -d "{\"body\":\"Build failed! Please check the logs.\"}" \
+          curl -s -H "Authorization: token $GITHUB_TOKEN" \
+          -X POST \
+          -d "{\"body\": \"Build failed! Please check the logs.\"}" \
           "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
 
   test:
