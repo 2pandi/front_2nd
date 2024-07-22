@@ -24,36 +24,42 @@ jobs:
 
       - name: Run tsc
         id: tsc
-        with:
-          script: |
-          const comment='comment'
-          core.setOutput('comment', comment)
+        run: npm run tsc
 
-      - name: Run build
-        id: build
+      # - name: Run build
+      #   id: build
+      #   run: |
+      #     EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+      #     echo "build_stderr<<$EOF" >> "$GITHUB_ENV"
+      #     echo "$build_output" >> "$GITHUB_ENV"
+      #     echo "$EOF" >> "$GITHUB_ENV"
+
+      - name: save build log
+        if: failure()
         run: |
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "build_stderr<<$EOF" >> "$GITHUB_ENV"
-          echo "$build_output" >> "$GITHUB_ENV"
-          echo "$EOF" >> "$GITHUB_ENV"
+          echo "## Build Log" > build_log.md
+          echo '```' >> build_log.md
+          cat build.log >> build_log.md
+          echo '```' >> build_log.md
 
       - name: Post tsc/build error comment
         uses: marocchino/sticky-pull-request-comment@v2
         with:
+          path: build_log.md
           header: tsc build
           GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CI }}
-          message: |
-            ## tsc build results
-            tsc stderr:
-            ```
-            ${{ env.tsc_stderr }}
-            ${{ env.tsc_outputs.comment }}
-            ```
-            build stderr:
-            ```
-            ${{ env.build_stderr }}
-            ${{ env.build_outputs }}
-            ```
+          # message: |
+          #   ## tsc build results
+          #   tsc stderr:
+          #   ```
+          #   ${{ env.tsc_stderr }}
+          #   ${{ env.tsc_outputs.comment }}
+          #   ```
+          #   build stderr:
+          #   ```
+          #   ${{ env.build_stderr }}
+          #   ${{ env.build_outputs }}
+          #   ```
 
   lint:
     runs-on: ubuntu-latest
