@@ -25,17 +25,16 @@ jobs:
         id: tsc
         run: |
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          npm run tsc --workspace packages/assignment-6 2> tsc_error.log
+          npm run tsc --workspace packages/assignment-6 >> "$GITHUB_ENV"
           echo "tsc_stderr<<$EOF" >> "$GITHUB_ENV"
-          rake tsc >> "$GITHUB_ENV"
           echo "$EOF" >> "$GITHUB_ENV"
 
       - name: Run build
         id: build
         run: |
-          npm run build --workspace packages/assignment-6 2> build_error.log
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          npm run build --workspace packages/assignment-6 >> "$GITHUB_ENV"
           echo "build_stderr<<$EOF" >> "$GITHUB_ENV"
-          rake test >> "$GITHUB_ENV"
           echo "$EOF" >> "$GITHUB_ENV"
 
       - name: Post tsc/build error comment
