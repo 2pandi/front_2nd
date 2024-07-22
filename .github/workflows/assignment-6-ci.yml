@@ -28,14 +28,14 @@ jobs:
       - name: Install dependencies
         run: pnpm -F assignment-6 install
 
-      # - name: Run tsc
-      #   id: tsc
-      #   run: tsc
-
       - name: Run build
         id: build
         run: |
-          pnpm -F assignment-6 build
+          pnpm -F assignment-6 build 2> build_stderr.txt
+          echo "::set-output name=stderr::$(cat build_stderr.txt)"
+
+      - name: Print build stderr
+        run: echo "${{ steps.build.outputs.stderr }}"
 
       - name: Post tsc/build error comment
         if: failure()
@@ -48,13 +48,8 @@ jobs:
             tsc stderr:
             ```
             ${{ steps.build.outputs }}
-            ${{ steps.build.outputs.error }}
-            ${{ steps.build.outputs.digest }}
-            ${{ steps.build.outputs.checksum }}
-            ${{ steps.build.outputs.filename }}
-            ${{ steps.build.outputs.artifact }}
-            ${{ steps.build.outputs.version }}
-            ${{ steps.build.outputs.status }}
+            ${{ steps.build.outputs.stderr }}
+
             ```
             build stderr:
             ```
