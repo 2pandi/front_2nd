@@ -41,7 +41,6 @@ jobs:
       #     echo "${{ env.stderr }}"
 
       - name: Post tsc/build error comment
-        if: failure()
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: tsc build
