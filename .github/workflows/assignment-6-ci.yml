@@ -25,19 +25,17 @@ jobs:
         id: tsc
         run: |
           npm run tsc --workspace packages/assignment-6 2> tsc_error.log
-          echo "tsc_stderr<<EOF" >> $GITHUB_ENV
-          cat tsc_error.log >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-        shell: bash
+          echo "tsc_stderr<<$EOF" >> "$GITHUB_ENV"
+          rake tsc >> "$GITHUB_ENV"
+          echo "EOF" >> "$GITHUB_ENV"
 
       - name: Run build
         id: build
         run: |
           npm run build --workspace packages/assignment-6 2> build_error.log
-          echo "build_stderr<<EOF" >> $GITHUB_ENV
-          cat build_error.log >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-        shell: bash
+          echo "build_stderr<<$EOF" >> "$GITHUB_ENV"
+          rake test >> "$GITHUB_ENV"
+          echo "$EOF" >> "$GITHUB_ENV"
 
       - name: Post tsc/build error comment
         if: failure()
