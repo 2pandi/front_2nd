@@ -12,42 +12,44 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: pnpm/action-setup@v4
         with:
-          node-version: '20.x'
+          node-version: latest
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: pnpm -F assignment-6 install
 
-      - name: Run tsc
-        id: tsc
-        run: npm run tsc
+      # - name: Run tsc
+      #   id: tsc
+      #   run: tsc
 
-      # - name: Run build
-      #   id: build
-      #   run: |
-      #     EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-      #     echo "build_stderr<<$EOF" >> "$GITHUB_ENV"
-      #     echo "$build_output" >> "$GITHUB_ENV"
-      #     echo "$EOF" >> "$GITHUB_ENV"
-
-      - name: save build log
-        if: failure()
+      - name: Run build
+        id: build
         run: |
-          echo "## Build Log" > build_log.md
-          echo '```' >> build_log.md
-          cat build.log >> build_log.md
-          echo '```' >> build_log.md
+          pnpm -F assignment-6 build
 
       - name: Post tsc/build error comment
+        if: failure()
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-          path: build_log.md
           header: tsc build
           GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CI }}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "## build error"
+            })
           # message: |
           #   ## tsc build results
           #   tsc stderr:
