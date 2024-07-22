@@ -43,25 +43,18 @@ jobs:
         with:
           header: tsc build
           GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CI }}
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: "## build error"
-            })
-          # message: |
-          #   ## tsc build results
-          #   tsc stderr:
-          #   ```
-          #   ${{ env.tsc_stderr }}
-          #   ${{ env.tsc_outputs.comment }}
-          #   ```
-          #   build stderr:
-          #   ```
-          #   ${{ env.build_stderr }}
-          #   ${{ env.build_outputs }}
-          #   ```
+          message: |
+            ## tsc build results
+            tsc stderr:
+            ```
+            ${{ env.tsc_stderr }}
+            ${{ env.tsc_outputs.comment }}
+            ```
+            build stderr:
+            ```
+            ${{ env.build_stderr }}
+            ${{ env.build_outputs }}
+            ```
 
   lint:
     runs-on: ubuntu-latest
