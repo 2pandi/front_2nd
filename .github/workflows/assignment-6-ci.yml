@@ -32,6 +32,7 @@ jobs:
         id: build
         run: |
           pnpm -F assignment-6 build 2> build_stderr.txt || true
+          cat build_stderr.txt
           echo "stderr=$(cat build_stderr.txt)" >> $GITHUB_ENV
 
       - name: Print build stderr
