@@ -47,6 +47,7 @@ jobs:
             ## tsc build results
             tsc stderr:
             ```
+            ${{ steps.build.outputs }}
             ${{ steps.build.outputs.error }}
             ${{ steps.build.outputs.digest }}
             ${{ steps.build.outputs.checksum }}
