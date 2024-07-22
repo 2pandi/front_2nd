@@ -37,7 +37,9 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
 
       - name: Print build stderr
-        run: echo "${{ env.stderr }}"
+        run: |
+          echo "Build stderr:"
+          echo "${{ env.stderr }}"
 
       - name: Post tsc/build error comment
         if: failure()
