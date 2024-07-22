@@ -47,11 +47,11 @@ jobs:
             ## tsc build results
             tsc stderr:
             ```
-            ${{ steps.build.outputs.comment }}
+            ${{ steps.build.outputs }}
             ```
             build stderr:
             ```
-            ${{ env.build_outputs }}
+            ${{ steps.build.outputs.comment }}
             ```
 
   lint:
