@@ -24,11 +24,9 @@ jobs:
 
       - name: Run tsc
         id: tsc
-        run: |
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "tsc_stderr<<$EOF" >> "$GITHUB_ENV"
-          echo "$tsc_output" >> "$GITHUB_ENV"
-          echo "$EOF" >> "$GITHUB_ENV"
+        script: |
+          const comment='comment'
+          core.setOutput('comment', comment)
 
       - name: Run build
         id: build
@@ -48,12 +46,12 @@ jobs:
             tsc stderr:
             ```
             ${{ env.tsc_stderr }}
-            ${{ env.tsc_output }}
+            ${{ env.tsc_outputs.comment }}
             ```
             build stderr:
             ```
             ${{ env.build_stderr }}
-            ${{ env.build_output }}
+            ${{ env.build_outputs }}
             ```
 
   lint:
