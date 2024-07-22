@@ -7,8 +7,9 @@ on:
       - 'packages/assignment-6/**'
 
 jobs:
-  build:
+build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -24,18 +25,18 @@ jobs:
       - name: Run tsc
         id: tsc
         run: |
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          npm run tsc --workspace packages/assignment-6 >> "$GITHUB_ENV"
-          echo "tsc_stderr<<$EOF" >> "$GITHUB_ENV"
-          echo "$EOF" >> "$GITHUB_ENV"
+          tsc_output=$(npm run tsc --workspace packages/assignment-6 2>&1)
+          echo "tsc_stderr<<EOF" >> $GITHUB_ENV
+          echo "$tsc_output" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Run build
         id: build
         run: |
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          npm run build --workspace packages/assignment-6 >> "$GITHUB_ENV"
-          echo "build_stderr<<$EOF" >> "$GITHUB_ENV"
-          echo "$EOF" >> "$GITHUB_ENV"
+          build_output=$(npm run build --workspace packages/assignment-6 2>&1)
+          echo "build_stderr<<EOF" >> $GITHUB_ENV
+          echo "$build_output" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Post tsc/build error comment
         uses: marocchino/sticky-pull-request-comment@v2
@@ -52,7 +53,6 @@ jobs:
             ```
             ${{ env.build_stderr }}
             ```
-
   lint:
     runs-on: ubuntu-latest
     steps:
