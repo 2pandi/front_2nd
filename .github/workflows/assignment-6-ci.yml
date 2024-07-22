@@ -32,10 +32,10 @@ jobs:
         id: build
         run: |
           pnpm -F assignment-6 build 2> build_stderr.txt
-          echo "::set-output name=stderr::$(cat build_stderr.txt)"
+          echo "stderr=$(cat build_stderr.txt)" >> $GITHUB_ENV
 
       - name: Print build stderr
-        run: echo "${{ steps.build.outputs.stderr }}"
+        run: echo "${{ env.stderr }}"
 
       - name: Post tsc/build error comment
         if: failure()
@@ -47,13 +47,7 @@ jobs:
             ## tsc build results
             tsc stderr:
             ```
-            ${{ steps.build.outputs }}
-            ${{ steps.build.outputs.stderr }}
-
-            ```
-            build stderr:
-            ```
-            ${{ steps.build.outputs.comment }}
+            ${{ env.stderr }}
             ```
 
   lint:
