@@ -25,18 +25,18 @@ jobs:
       - name: Run tsc
         id: tsc
         run: |
-          tsc_output=$(npm run tsc --workspace packages/assignment-6 2>&1)
-          echo "tsc_stderr<<$EOF" >> $GITHUB_ENV
-          echo "$tsc_output" >> $GITHUB_ENV
-          echo "$EOF" >> $GITHUB_ENV
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "tsc_stderr<<$EOF" >> "$GITHUB_ENV"
+          echo "$tsc_output" >> "$GITHUB_ENV"
+          echo "$EOF" >> "$GITHUB_ENV"
 
       - name: Run build
         id: build
         run: |
-          build_output=$(npm run build --workspace packages/assignment-6 2>&1)
-          echo "build_stderr<<$EOF" >> $GITHUB_ENV
-          echo "$build_output" >> $GITHUB_ENV
-          echo "$EOF" >> $GITHUB_ENV
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "build_stderr<<$EOF" >> "$GITHUB_ENV"
+          echo "$build_output" >> "$GITHUB_ENV"
+          echo "$EOF" >> "$GITHUB_ENV"
 
       - name: Post tsc/build error comment
         uses: marocchino/sticky-pull-request-comment@v2
@@ -47,11 +47,13 @@ jobs:
             ## tsc build results
             tsc stderr:
             ```
-            ${{ steps.tsc.outputs }}
+            ${{ env.tsc_stderr }}
+            ${{ env.tsc_output }}
             ```
             build stderr:
             ```
-            ${{ steps.build.outputs }}
+            ${{ env.build_stderr }}
+            ${{ env.build_output }}
             ```
 
   lint:
