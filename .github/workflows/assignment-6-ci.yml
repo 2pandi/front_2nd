@@ -87,7 +87,6 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    needs: [build, lint]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -118,7 +117,6 @@ jobs:
 
   lighthouse:
     runs-on: ubuntu-latest
-    needs: [build, lint, test]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
