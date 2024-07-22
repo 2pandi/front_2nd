@@ -30,15 +30,10 @@ jobs:
 
       - name: Run build
         id: build
-        uses: actions/github-script@v3.1.0
-        with:
-          result-encoding: string
-          script: |
-            core.setOutput('stderr', `${context.repo.owner}`)
-        # run: |
-        #   pnpm -F assignment-6 build 2> build_stderr.txt || true
-        #   cat build_stderr.txt
-        #   echo "stderr=$(cat build_stderr.txt)" >> "$GITHUB_OUTPUT"
+        run: |
+          pnpm -F assignment-6 build 2> build_stderr.txt || true
+          stderr=$(cat build_stderr.txt)
+          echo "stderr=$stderr" >> "$GITHUB_OUTPUT"
 
       # - name: Print build stderr
       #   run: |
