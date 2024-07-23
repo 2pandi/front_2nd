@@ -197,7 +197,7 @@ jobs:
         if: always()
         run: |
           if [ -f .lighthouseci/lhr.json ]; then
-            LIGHTHOUSE_RESULT=$(cat << 'EOF'
+            LIGHTHOUSE_RESULT=$(cat << EOF
           **Lighthouse 성능 측정 결과**
 
           | 카테고리 | 점수 |
