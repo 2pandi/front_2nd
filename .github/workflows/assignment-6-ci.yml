@@ -111,15 +111,16 @@ jobs:
         run: pnpm -F assignment-6 install
 
       - name: Run Tests and Measure Coverage
+        id: test  
         run: pnpm -F assignment-6 test -- --coverage
 
       - name: Extract Coverage Data
         id: coverage
         run: |
-          echo "lines=$(grep -Po 'Lines\s*:\s*\K[0-9]+\.[0-9](?=%)' packages/assignment-6/coverage/index.html)" >> $GITHUB_OUTPUT
-          echo "branches=$(grep -Po 'Branches\s*:\s*\K[0-9]+\.[0-9](?=%)' packages/assignment-6/coverage/index.html)" >> $GITHUB_OUTPUT
-          echo "functions=$(grep -Po 'Functions\s*:\s*\K[0-9]+\.[0-9](?=%)' packages/assignment-6/coverage/index.html)" >> $GITHUB_OUTPUT
-          echo "statements=$(grep -Po 'Statements\s*:\s*\K[0-9]+\.[0-9](?=%)' packages/assignment-6/coverage/index.html)" >> $GITHUB_OUTPUT
+          echo "lines=$(grep -oP 'All files.*?\|\s*\K[0-9.]+(?=\s*\|)' <<< "${{ steps.test.outputs.stdout }}")" >> $GITHUB_OUTPUT
+          echo "statements=$(grep -oP 'All files.*?\|.*?\|\s*\K[0-9.]+(?=\s*\|)' <<< "${{ steps.test.outputs.stdout }}")" >> $GITHUB_OUTPUT
+          echo "functions=$(grep -oP 'All files.*?\|.*?\|.*?\|\s*\K[0-9.]+(?=\s*\|)' <<< "${{ steps.test.outputs.stdout }}")" >> $GITHUB_OUTPUT
+          echo "branches=$(grep -oP 'All files.*?\|.*?\|.*?\|.*?\|\s*\K[0-9.]+(?=\s*\|)' <<< "${{ steps.test.outputs.stdout }}")" >> $GITHUB_OUTPUT
 
       - name: Post Test Coverage comment
         uses: marocchino/sticky-pull-request-comment@v2
