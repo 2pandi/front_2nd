@@ -39,7 +39,6 @@ jobs:
 
       - name: Post tsc error comment
         uses: marocchino/sticky-pull-request-comment@v2
-        if: failure()
         with:
           header: TypeScript Compiler Errors
           GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CI }}
@@ -58,7 +57,6 @@ jobs:
 
       - name: Post tsc/build error comment
         uses: marocchino/sticky-pull-request-comment@v2
-        if: failure()
         with:
           header: tsc build
           GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CI }}
@@ -103,7 +101,6 @@ jobs:
           message: |
             ## ESLint results
             ${{ steps.lint.outputs.lint_error_output }}
-            
 
   test:
     runs-on: ubuntu-latest
@@ -148,7 +145,7 @@ jobs:
             - 구문 커버리지: ${{ steps.coverage.outputs.statements }}%
             - 함수 커버리지: ${{ steps.coverage.outputs.functions }}%
             - 브랜치 커버리지: ${{ steps.coverage.outputs.branches }}%
-            
+
   lighthouse:
     runs-on: ubuntu-latest
     steps:
