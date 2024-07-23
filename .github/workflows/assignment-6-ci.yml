@@ -190,29 +190,30 @@ jobs:
       - name: Run Lighthouse CI
         continue-on-error: true
         run: |
-          lhci autorun --collect.url=http://localhost:5173
+          lhci autorun --collect.url=http://localhost:5173 --upload.target=filesystem --upload.outputDir=./lighthouse-results
 
       - name: Post Lighthouse Results
         id: lighthouse
         if: always()
         run: |
-          if [ -f .lighthouseci/lhr.json ]; then
+          if [ -f ./lighthouse-results/lhr.json ]; then
             LIGHTHOUSE_RESULT=$(cat << EOF
           **Lighthouse 성능 측정 결과**
 
           | 카테고리 | 점수 |
           | --- | --- |
-          | Performance | $(jq '.categories.performance.score * 100' < .lighthouseci/lhr.json)% |
-          | Accessibility | $(jq '.categories.accessibility.score * 100' < .lighthouseci/lhr.json)% |
-          | Best Practices | $(jq '.categories["best-practices"].score * 100' < .lighthouseci/lhr.json)% |
-          | SEO | $(jq '.categories.seo.score * 100' < .lighthouseci/lhr.json)% |
+          | Performance | $(jq '.categories.performance.score * 100' < ./lighthouse-results/lhr.json)% |
+          | Accessibility | $(jq '.categories.accessibility.score * 100' < ./lighthouse-results/lhr.json)% |
+          | Best Practices | $(jq '.categories["best-practices"].score * 100' < ./lighthouse-results/lhr.json)% |
+          | SEO | $(jq '.categories.seo.score * 100' < ./lighthouse-results/lhr.json)% |
           EOF
           )
             echo "result<<EOF" >> $GITHUB_OUTPUT
             echo "$LIGHTHOUSE_RESULT" >> $GITHUB_OUTPUT
             echo "EOF" >> $GITHUB_OUTPUT
           else
-            echo "result=Lighthouse 결과 파일을 찾을 수 없습니다." >> $GITHUB_OUTPUT
+            echo "result=Lighthouse 결과 파일을 찾을 수 없습니다. (경로: ./lighthouse-results/lhr.json)" >> $GITHUB_OUTPUT
+            ls -R ./lighthouse-results
           fi
 
       - name: Post Lighthouse comment
