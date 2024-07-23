@@ -61,22 +61,30 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps
       - name: Run ESLint
-        run: npm run lint --workspace packages/assignment-6 > eslint-report.json
+        run: |
+          LINT_ERROR_OUTPUT=$(pnpm -F assignment-6 lint2>&1 || true)
+          LINT_ERROR_OUTPUT="${LINT_ERROR_OUTPUT//'%'/'%25'}"
+          LINT_ERROR_OUTPUT="${LINT_ERROR_OUTPUT//$'\n'/'%0A'}"
+          LINT_ERROR_OUTPUT="${LINT_ERROR_OUTPUT//$'\r'/'%0D'}"
+          echo "lint_error_output=$LINT_ERROR_OUTPUT" >> $GITHUB_OUTPUT
       - name: Upload ESLint report
         if: failure()
         uses: actions/upload-artifact@v2
         with:
           name: eslint-report
           path: eslint-report.json
-      - name: Post ESLint error comment
-        if: failure()
-        env:
+
+      - name: Post tsc/build error comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: lint
           GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CI }}
-        run: |
-          curl -s -H "Authorization: token $TOKEN_FOR_CI" \
-          -X POST \
-          -d "{\"body\": \"Build failed! Please check the logs.\"}" \
-          "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
+          message: |
+            ## lint results
+            lint stderr:
+            ```
+            ${{ steps.build.outputs.lint_error_output }}
+            ```
 
   test:
     runs-on: ubuntu-latest
