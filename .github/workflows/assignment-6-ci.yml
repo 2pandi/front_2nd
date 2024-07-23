@@ -150,31 +150,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Set up Node.js
-        uses: pnpm/action-setup@v4
+        uses: actions/setup-node@v2
         with:
-          version: latest
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
+          node-version: '20.x'
 
       - name: Install dependencies
         run: pnpm -F assignment-6 install
 
+      - name: Build project
+        run: pnpm -F assignment-6 build
+
       - name: Install Lighthouse CI
-        run: pnpm install -g @lhci/cli
+        run: npm install -g @lhci/cli
 
       - name: Run Lighthouse CI
         run: |
-          lhci autorun --upload.target=temporary-public-storage --output=./lighthouse-results
+          lhci autorun --upload.target=temporary-public-storage --collect.staticDistDir=./packages/assignment-6/dist
 
       - name: Post Lighthouse Results
-        if: always()
         id: lighthouse
         run: |
           LIGHTHOUSE_RESULT=$(cat << EOF
@@ -182,10 +178,10 @@ jobs:
 
           | 카테고리 | 점수 |
           | --- | --- |
-          | Performance | $(jq '.categories.performance.score * 100' < lighthouse-results/lhr.report.json)% |
-          | Accessibility | $(jq '.categories.accessibility.score * 100' < lighthouse-results/lhr.report.json)% |
-          | Best Practices | $(jq '.categories["best-practices"].score * 100' < lighthouse-results/lhr.report.json)% |
-          | SEO | $(jq '.categories.seo.score * 100' < lighthouse-results/lhr.report.json)% |
+          | Performance | $(jq '.categories.performance.score * 100' < .lighthouseci/lhr.json)% |
+          | Accessibility | $(jq '.categories.accessibility.score * 100' < .lighthouseci/lhr.json)% |
+          | Best Practices | $(jq '.categories["best-practices"].score * 100' < .lighthouseci/lhr.json)% |
+          | SEO | $(jq '.categories.seo.score * 100' < .lighthouseci/lhr.json)% |
           EOF
           )
           echo "result<<EOF" >> $GITHUB_OUTPUT
