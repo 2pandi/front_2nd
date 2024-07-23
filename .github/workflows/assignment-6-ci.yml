@@ -111,16 +111,15 @@ jobs:
         run: pnpm -F assignment-6 install
 
       - name: Run Tests and Measure Coverage
-        id: test  
-        run: pnpm -F assignment-6 test -- --coverage
+        run: pnpm -F assignment-6 test -- --coverage > test_output.txt
 
       - name: Extract Coverage Data
         id: coverage
         run: |
-          echo "lines=$(grep -oP 'All files.*?\|\s*\K[0-9.]+(?=\s*\|)' <<< "${{ steps.test.outputs.stdout }}")" >> $GITHUB_OUTPUT
-          echo "statements=$(grep -oP 'All files.*?\|.*?\|\s*\K[0-9.]+(?=\s*\|)' <<< "${{ steps.test.outputs.stdout }}")" >> $GITHUB_OUTPUT
-          echo "functions=$(grep -oP 'All files.*?\|.*?\|.*?\|\s*\K[0-9.]+(?=\s*\|)' <<< "${{ steps.test.outputs.stdout }}")" >> $GITHUB_OUTPUT
-          echo "branches=$(grep -oP 'All files.*?\|.*?\|.*?\|.*?\|\s*\K[0-9.]+(?=\s*\|)' <<< "${{ steps.test.outputs.stdout }}")" >> $GITHUB_OUTPUT
+          echo "lines=$(grep -oP 'All files.*?\|\s*\K[0-9.]+(?=\s*\|)' test_output.txt)" >> $GITHUB_OUTPUT
+          echo "statements=$(grep -oP 'All files.*?\|.*?\|\s*\K[0-9.]+(?=\s*\|)' test_output.txt)" >> $GITHUB_OUTPUT
+          echo "functions=$(grep -oP 'All files.*?\|.*?\|.*?\|\s*\K[0-9.]+(?=\s*\|)' test_output.txt)" >> $GITHUB_OUTPUT
+          echo "branches=$(grep -oP 'All files.*?\|.*?\|.*?\|.*?\|\s*\K[0-9.]+(?=\s*\|)' test_output.txt)" >> $GITHUB_OUTPUT
 
       - name: Post Test Coverage comment
         uses: marocchino/sticky-pull-request-comment@v2
@@ -131,10 +130,10 @@ jobs:
             **테스트 성공 ✅**
 
             **커버리지 결과**
-            - 라인 커버리지: ${{ steps.coverage.outputs.lines }}%
-            - 브랜치 커버리지: ${{ steps.coverage.outputs.branches }}%
-            - 함수 커버리지: ${{ steps.coverage.outputs.functions }}%
-            - 구문 커버리지: ${{ steps.coverage.outputs.statements }}%
+            - 라인: ${{ steps.coverage.outputs.lines }}%
+            - 구문: ${{ steps.coverage.outputs.statements }}%
+            - 함수: ${{ steps.coverage.outputs.functions }}%
+            - 브랜치: ${{ steps.coverage.outputs.branches }}%
             
   lighthouse:
     runs-on: ubuntu-latest
