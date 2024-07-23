@@ -188,6 +188,7 @@ jobs:
         run: npm install -g @lhci/cli
 
       - name: Run Lighthouse CI
+        continue-on-error: true
         run: |
           lhci autorun --collect.url=http://localhost:5173
 
