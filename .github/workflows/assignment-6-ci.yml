@@ -156,9 +156,9 @@ jobs:
         with:
           node-version: '20.x'
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: pnpm -F assignment-6 install
       - name: Install Lighthouse CI
-        run: npm install -g @lhci/cli
+        run: pnpm install -g @lhci/cli
       - name: Run Lighthouse CI
         run: |
           lhci autorun --upload.target=temporary-public-storage --output=./lighthouse-results
