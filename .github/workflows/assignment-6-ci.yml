@@ -31,14 +31,11 @@ jobs:
       - name: Run build
         id: build
         run: |
-          pnpm -F assignment-6 build 2> build_stderr.txt || true
-          stderr=$(cat build_stderr.txt)
-          echo "stderr=$stderr" >> "$GITHUB_OUTPUT"
-
-      # - name: Print build stderr
-      #   run: |
-      #     echo "Build stderr:"
-      #     echo "${{ env.stderr }}"
+          ERROR_OUTPUT=$(pnpm -F assignment-6 build 2>&1 || true)
+          ERROR_OUTPUT="${ERROR_OUTPUT//'%'/'%25'}"
+          ERROR_OUTPUT="${ERROR_OUTPUT//$'\n'/'%0A'}"
+          ERROR_OUTPUT="${ERROR_OUTPUT//$'\r'/'%0D'}"
+          echo "error_output=$ERROR_OUTPUT" >> $GITHUB_OUTPUT
 
       - name: Post tsc/build error comment
         uses: marocchino/sticky-pull-request-comment@v2
@@ -49,9 +46,9 @@ jobs:
             ## tsc build results
             tsc stderr:
             ```
-            ${{ steps.build.outputs.stderr }}
+            ${{ steps.build.outputs.error_output }}
             ```
-
+            
   lint:
     runs-on: ubuntu-latest
     steps:
