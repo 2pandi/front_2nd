@@ -193,6 +193,7 @@ jobs:
 
       - name: Post Lighthouse Results
         id: lighthouse
+        if: always()
         run: |
           if [ -f .lighthouseci/lhr.json ]; then
             LIGHTHOUSE_RESULT=$(cat << EOF
