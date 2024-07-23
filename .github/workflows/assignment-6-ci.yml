@@ -62,7 +62,7 @@ jobs:
         run: npm install --legacy-peer-deps
       - name: Run ESLint
         run: |
-          LINT_ERROR_OUTPUT=$(pnpm -F assignment-6 run lint2>&1 || true)
+          LINT_ERROR_OUTPUT=$(pnpm -F assignment-6 run lint 2>&1 || true)
           LINT_ERROR_OUTPUT="${LINT_ERROR_OUTPUT//'%'/'%25'}"
           LINT_ERROR_OUTPUT="${LINT_ERROR_OUTPUT//$'\n'/'%0A'}"
           LINT_ERROR_OUTPUT="${LINT_ERROR_OUTPUT//$'\r'/'%0D'}"
