@@ -210,6 +210,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Post Lighthouse comment
+        if: always()
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CI }}
