@@ -196,17 +196,17 @@ jobs:
         if: always()
         run: |
           if [ -f .lighthouseci/lhr.json ]; then
-            LIGHTHOUSE_RESULT=$(cat << EOF
-            **Lighthouse 성능 측정 결과**
+            LIGHTHOUSE_RESULT=$(cat << 'EOF'
+          **Lighthouse 성능 측정 결과**
 
-            | 카테고리 | 점수 |
-            | --- | --- |
-            | Performance | $(jq '.categories.performance.score * 100' < .lighthouseci/lhr.json)% |
-            | Accessibility | $(jq '.categories.accessibility.score * 100' < .lighthouseci/lhr.json)% |
-            | Best Practices | $(jq '.categories["best-practices"].score * 100' < .lighthouseci/lhr.json)% |
-            | SEO | $(jq '.categories.seo.score * 100' < .lighthouseci/lhr.json)% |
-            EOF
-            )
+          | 카테고리 | 점수 |
+          | --- | --- |
+          | Performance | $(jq '.categories.performance.score * 100' < .lighthouseci/lhr.json)% |
+          | Accessibility | $(jq '.categories.accessibility.score * 100' < .lighthouseci/lhr.json)% |
+          | Best Practices | $(jq '.categories["best-practices"].score * 100' < .lighthouseci/lhr.json)% |
+          | SEO | $(jq '.categories.seo.score * 100' < .lighthouseci/lhr.json)% |
+          EOF
+          )
             echo "result<<EOF" >> $GITHUB_OUTPUT
             echo "$LIGHTHOUSE_RESULT" >> $GITHUB_OUTPUT
             echo "EOF" >> $GITHUB_OUTPUT
