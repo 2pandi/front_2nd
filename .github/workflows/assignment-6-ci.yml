@@ -153,37 +153,43 @@ jobs:
             - 브랜치 커버리지: ${{ steps.coverage.outputs.branches }}%
 
   lighthouse:
-    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Set up pnpm
         uses: pnpm/action-setup@v4
         with:
           version: latest
 
-      - name: Download build artifacts
-        uses: actions/download-artifact@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          name: dist
-          path: packages/assignment-6/dist
+          node-version: 20
+          cache: 'pnpm'
 
-      - name: Check build output
-        run: ls -R packages/assignment-6/dist
+      - name: Install dependencies
+        run: pnpm -F assignment-6 install
+
+      - name: Start dev server
+        run: pnpm -F assignment-6 start & # 백그라운드에서 실행
+        env:
+          PORT: 5173 # Vite의 기본 포트
+
+      - name: Wait for dev server
+        run: |
+          echo "Waiting for dev server to start..."
+          while ! nc -z localhost 5173; do
+            sleep 1
+          done
 
       - name: Install Lighthouse CI
         run: npm install -g @lhci/cli
 
       - name: Run Lighthouse CI
         run: |
-          lhci autorun --upload.target=temporary-public-storage --collect.staticDistDir=./packages/assignment-6/dist
+          lhci autorun --collect.url=http://localhost:5173
 
       - name: Post Lighthouse Results
         id: lighthouse
