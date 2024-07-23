@@ -206,7 +206,7 @@ jobs:
           if [ -f "$LATEST_REPORT" ]; then
             echo "Using report file: $LATEST_REPORT"
             LIGHTHOUSE_RESULT=$(cat << EOF
-          **Lighthouse 성능 측정 결과**
+          ## Lighthouse 성능 측정 결과
 
           | 카테고리 | 점수 |
           | --- | --- |
@@ -236,19 +236,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: '20.x'
+          version: latest
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm -F assignment-6 install
+
       - name: Set reviewer
         run: |
           REVIEWERS=("naturekim" "HM970506")
           RANDOM_REVIEWER=${REVIEWERS[$RANDOM % ${#REVIEWERS[@]}]}
           echo "random_reviewer=$RANDOM_REVIEWER" >> $GITHUB_ENV
+
       - name: Add reviewer to PR
         uses: actions/github-script@v5
         with:
+          github-token: ${{secrets.TOKEN_FOR_CI}}
           script: |
             const reviewer = process.env.random_reviewer;
             await github.rest.pulls.requestReviewers({
@@ -257,6 +270,7 @@ jobs:
               pull_number: context.payload.pull_request.number,
               reviewers: [reviewer]
             });
+
       - name: Post reviewer mention comment
         uses: marocchino/sticky-pull-request-comment@v2
         with:
