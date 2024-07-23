@@ -40,10 +40,10 @@ jobs:
       - name: Post tsc error comment
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-          header: TypeScript Compiler Errors
+          header: TypeScript Compiler Results
           GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CI }}
           message: |
-            ## TypeScript Compiler Errors
+            ## TypeScript Compiler Results
             ${{ steps.tsc.outputs.tsc_error_output }}
 
       - name: Run build
@@ -58,10 +58,10 @@ jobs:
       - name: Post tsc/build error comment
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-          header: tsc build
+          header: build
           GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CI }}
           message: |
-            ## tsc build results
+            ## Build results
             ${{ steps.build.outputs.error_output }}
 
       - name: Upload build artifacts
