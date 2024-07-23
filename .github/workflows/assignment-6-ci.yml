@@ -93,28 +93,18 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: pnpm/action-setup@v4
-        with:
-          version: latest
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm -F assignment-6 install
+      # ... (이전 단계들은 그대로 유지)
 
       - name: Run Tests and Measure Coverage
         run: pnpm -F assignment-6 test -- --coverage
 
-      - name: Check Coverage Report
-        run: cat packages/assignment-6/coverage/index.html
+      - name: Extract Coverage Data
+        id: coverage
+        run: |
+          echo "lines=$(grep -Po 'Lines\s*:\s*\K[0-9]+\.[0-9]+(?=%)' packages/assignment-6/coverage/index.html)" >> $GITHUB_OUTPUT
+          echo "branches=$(grep -Po 'Branches\s*:\s*\K[0-9]+\.[0-9]+(?=%)' packages/assignment-6/coverage/index.html)" >> $GITHUB_OUTPUT
+          echo "functions=$(grep -Po 'Functions\s*:\s*\K[0-9]+\.[0-9]+(?=%)' packages/assignment-6/coverage/index.html)" >> $GITHUB_OUTPUT
+          echo "statements=$(grep -Po 'Statements\s*:\s*\K[0-9]+\.[0-9]+(?=%)' packages/assignment-6/coverage/index.html)" >> $GITHUB_OUTPUT
 
       - name: Post Test Coverage comment
         uses: marocchino/sticky-pull-request-comment@v2
@@ -125,10 +115,10 @@ jobs:
             **테스트 성공 ✅**
 
             **커버리지 결과**
-            - 라인 커버리지: $(grep -Po 'Lines\s*:\s*\K[0-9]+\.[0-9]+%' packages/assignment-6/coverage/index.html)
-            - 브랜치 커버리지: $(grep -Po 'Branches\s*:\s*\K[0-9]+\.[0-9]+%' packages/assignment-6/coverage/index.html)
-            - 함수 커버리지: $(grep -Po 'Functions\s*:\s*\K[0-9]+\.[0-9]+%' packages/assignment-6/coverage/index.html)
-            - 구문 커버리지: $(grep -Po 'Statements\s*:\s*\K[0-9]+\.[0-9]+%' packages/assignment-6/coverage/index.html)
+            - 라인 커버리지: ${{ steps.coverage.outputs.lines }}%
+            - 브랜치 커버리지: ${{ steps.coverage.outputs.branches }}%
+            - 함수 커버리지: ${{ steps.coverage.outputs.functions }}%
+            - 구문 커버리지: ${{ steps.coverage.outputs.statements }}%
 
   lighthouse:
     runs-on: ubuntu-latest
