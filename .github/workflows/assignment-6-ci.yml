@@ -64,6 +64,12 @@ jobs:
             ## tsc build results
             ${{ steps.build.outputs.error_output }}
 
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: packages/assignment-6/dist
+
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -147,26 +153,27 @@ jobs:
             - 브랜치 커버리지: ${{ steps.coverage.outputs.branches }}%
 
   lighthouse:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '20'
 
       - name: Set up pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
           version: latest
 
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Build project
-        run: pnpm -F assignment-6 build
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: packages/assignment-6/dist
 
       - name: Check build output
         run: ls -R packages/assignment-6/dist
