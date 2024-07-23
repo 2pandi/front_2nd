@@ -116,10 +116,10 @@ jobs:
       - name: Extract Coverage Data
         id: coverage
         run: |
-          echo "lines=$(grep -Po 'Lines\s*:\s*\K[0-9]+\.[0-9]+(?=%)' packages/assignment-6/coverage/index.html)" >> $GITHUB_OUTPUT
-          echo "branches=$(grep -Po 'Branches\s*:\s*\K[0-9]+\.[0-9]+(?=%)' packages/assignment-6/coverage/index.html)" >> $GITHUB_OUTPUT
-          echo "functions=$(grep -Po 'Functions\s*:\s*\K[0-9]+\.[0-9]+(?=%)' packages/assignment-6/coverage/index.html)" >> $GITHUB_OUTPUT
-          echo "statements=$(grep -Po 'Statements\s*:\s*\K[0-9]+\.[0-9]+(?=%)' packages/assignment-6/coverage/index.html)" >> $GITHUB_OUTPUT
+          echo "lines=$(grep -Po 'Lines\s*:\s*\K[0-9]+\.[0-9](?=%)' packages/assignment-6/coverage/index.html)" >> $GITHUB_OUTPUT
+          echo "branches=$(grep -Po 'Branches\s*:\s*\K[0-9]+\.[0-9](?=%)' packages/assignment-6/coverage/index.html)" >> $GITHUB_OUTPUT
+          echo "functions=$(grep -Po 'Functions\s*:\s*\K[0-9]+\.[0-9](?=%)' packages/assignment-6/coverage/index.html)" >> $GITHUB_OUTPUT
+          echo "statements=$(grep -Po 'Statements\s*:\s*\K[0-9]+\.[0-9](?=%)' packages/assignment-6/coverage/index.html)" >> $GITHUB_OUTPUT
 
       - name: Post Test Coverage comment
         uses: marocchino/sticky-pull-request-comment@v2
