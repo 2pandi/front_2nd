@@ -203,32 +203,116 @@ function App() {
     }
   };
 
+  function addDays(date: Date, days: number): Date {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+  }
+
+  function addWeeks(date: Date, weeks: number): Date {
+    return addDays(date, weeks * 7);
+  }
+
+  function addYears(date: Date, years: number): Date {
+    const result = new Date(date);
+    result.setFullYear(result.getFullYear() + years);
+    return result;
+  }
+
+  function createRecurringEvents(event: Event, endDateStr: string): Event[] {
+    const recurringEvents: Event[] = [];
+    let currentDate = new Date(event.date);
+    const endDate = new Date(endDateStr);
+
+    while (currentDate <= endDate) {
+      const eventDate = currentDate.toISOString().split('T')[0];
+      recurringEvents.push({
+        ...event,
+        id: Date.now() + Math.random(),
+        date: eventDate,
+      });
+
+      switch (event.repeat.type) {
+        case 'daily':
+          currentDate = addDays(currentDate, event.repeat.interval);
+          break;
+        case 'weekly':
+          currentDate = addWeeks(currentDate, event.repeat.interval);
+          break;
+        case 'monthly': {
+          // 다음 달의 1일로 이동
+          currentDate.setMonth(
+            currentDate.getMonth() + event.repeat.interval,
+            1
+          );
+
+          // 원래 날짜의 일(day) 또는 해당 월의 마지막 날 중 작은 값으로 설정
+          const originalDay = new Date(event.date).getDate();
+          const lastDayOfMonth = new Date(
+            currentDate.getFullYear(),
+            currentDate.getMonth() + 1,
+            0
+          ).getDate();
+          currentDate.setDate(Math.min(originalDay, lastDayOfMonth));
+          break;
+        }
+        case 'yearly':
+          currentDate = addYears(currentDate, event.repeat.interval);
+          break;
+        default:
+          throw new Error('Invalid repeat type');
+      }
+    }
+
+    return recurringEvents;
+  }
+
   const saveEvent = async (eventData: Event) => {
     try {
-      let response;
       if (editingEvent) {
-        response = await fetch(`/api/events/${eventData.id}`, {
+        const response = await fetch(`/api/events/${eventData.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(eventData),
         });
+        if (!response.ok) throw new Error('Failed to update event');
       } else {
-        response = await fetch('/api/events', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(eventData),
-        });
+        if (eventData.repeat.type !== 'none') {
+          const endDate =
+            eventData.repeat.endDate ||
+            (() => {
+              const oneYearLater = new Date(eventData.date);
+              oneYearLater.setFullYear(oneYearLater.getFullYear() + 1);
+              return oneYearLater.toISOString().split('T')[0];
+            })();
+
+          const recurringEvents = createRecurringEvents(eventData, endDate);
+
+          for (const event of recurringEvents) {
+            const response = await fetch('/api/events', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(event),
+            });
+            if (!response.ok) throw new Error('Failed to save event');
+          }
+        } else {
+          const response = await fetch('/api/events', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(eventData),
+          });
+          if (!response.ok) throw new Error('Failed to save event');
+        }
       }
 
-      if (!response.ok) {
-        throw new Error('Failed to save event');
-      }
-
-      await fetchEvents(); // 이벤트 목록 새로고침
+      await fetchEvents();
       setEditingEvent(null);
       resetForm();
       toast({
@@ -604,7 +688,13 @@ function App() {
                                   bg={isNotified ? 'red.100' : 'gray.100'}
                                   borderRadius="md"
                                   fontWeight={isNotified ? 'bold' : 'normal'}
-                                  color={isNotified ? 'red.500' : 'inherit'}
+                                  color={
+                                    isNotified
+                                      ? 'red.500'
+                                      : event.repeat.type !== 'none'
+                                        ? 'blue'
+                                        : 'inherit'
+                                  }
                                 >
                                   <HStack spacing={1}>
                                     {isNotified && <BellIcon />}
